@@ -1,0 +1,4 @@
+github.com/mikolajgs/broccli v2.0.0+incompatible h1:zpLdjMIA9QrUtcXQqjFi3WCY3P8n+/45VHRAc2bfZ4c=
+github.com/mikolajgs/broccli v2.0.0+incompatible/go.mod h1:IOqvFr2wSjX/7otXFff5+jOdyWVXi5OsKEJ5viXk/vg=
+github.com/mikolajgs/terminal-ui v0.2.0 h1:KiexkGfhXUerLJ+K2T3oDHin+ETu0NFWO3VD3qoilfo=
+github.com/mikolajgs/terminal-ui v0.2.0/go.mod h1:T63IKxGDq9/KSyFhJJ5Vdj+k4MhREi+MqEYQrjhq9FQ=
