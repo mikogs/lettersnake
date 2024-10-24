@@ -15,13 +15,13 @@ const LEFT = 2
 const RIGHT = 3
 
 type gameInterface struct {
-	t       *tui.TUI
-	game    *tui.TUIPane
-	top     *tui.TUIPane
+	t           *tui.TUI
+	game        *tui.TUIPane
+	top         *tui.TUIPane
 	leftBottom  *tui.TUIPane
 	rightBottom *tui.TUIPane
-	g       *game
-	sizeSet bool
+	g           *game
+	sizeSet     bool
 }
 
 func newGameInterface(g *game) *gameInterface {
@@ -89,13 +89,13 @@ func (gi *gameInterface) initIteration() {
 	gi.game.SetOnIterate(f)
 
 	gi.leftBottom.SetOnIterate(func(p *tui.TUIPane) int {
-		trim := 20-len(gi.g.currentTranslation)
+		trim := 20 - len(gi.g.currentTranslation)
 		p.Write(1, 0, gi.g.currentTranslation+strings.Repeat(" ", trim), false)
 		return 0
 	})
 
 	gi.rightBottom.SetOnIterate(func(p *tui.TUIPane) int {
-		trim := 20-len(gi.g.consumedLetters)
+		trim := 20 - len(gi.g.consumedLetters)
 		p.Write(1, 0, gi.g.consumedLetters+strings.Repeat(" ", trim), false)
 		return 0
 	})

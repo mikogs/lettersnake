@@ -19,19 +19,19 @@ type letter struct {
 }
 
 type game struct {
-	words           []string
-	started         bool
-	nextWordIndex   int
-	currentWord     string
+	words              []string
+	started            bool
+	nextWordIndex      int
+	currentWord        string
 	currentTranslation string
-	wordsGiven      int
-	wordsCorrect    int
-	letters         []letter
-	size            [2]int
-	direction       int
-	snake           []segment
-	remove          *segment
-	consumedLetters string
+	wordsGiven         int
+	wordsCorrect       int
+	letters            []letter
+	size               [2]int
+	direction          int
+	snake              []segment
+	remove             *segment
+	consumedLetters    string
 }
 
 type segment struct {
