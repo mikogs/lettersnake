@@ -2,7 +2,7 @@
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/CommandLineGems/snakey-letters.svg)](https://pkg.go.dev/github.com/CommandLineGems/snakey-letters) [![Go Report Card](https://goreportcard.com/badge/github.com/CommandLineGems/snakey-letters)](https://goreportcard.com/report/github.com/CommandLineGems/snakey-letters) ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/CommandLineGems/snakey-letters?sort=semver)
 
-This project is a small, terminal-based snake game designed for my kids. The concept is that you get a word in one language and you need to collect letter to form its translation in another.
+This project is a small, terminal-based snake game designed for my kids. The concept is that you get a word in one language and you need to collect letters to form its translation in another.
 
 See screenshot below:
 
