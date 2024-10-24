@@ -12,7 +12,7 @@ See screenshot below:
 
 To play the game just run:
 
-    go run *.go start -f words-u-o.txt
+    go run *.go start -f words.txt
 
 ### Instructions
 Use arrows to steer the snake.
