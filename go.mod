@@ -1,6 +1,6 @@
-module github.com/mikolajgs/snakey-letters
+module github.com/cli-games/snakey-letters
 
-go 1.22.5
+go 1.23.4
 
 require (
 	github.com/mikolajgs/broccli v2.0.0+incompatible
