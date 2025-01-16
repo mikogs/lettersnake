@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/mikolajgs/broccli"
+	"github.com/go-phings/broccli"
 )
 
 func versionHandler(c *broccli.CLI) int {
