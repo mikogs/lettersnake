@@ -1,3 +1,0 @@
-hol:hall
-garaż:garage
-jadalnia:dining_room
