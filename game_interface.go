@@ -1,195 +1,112 @@
 package main
 
 import (
-	"fmt"
-	"math/rand"
+	"context"
 	"os"
-	"strings"
+	"sync"
 
-	tui "github.com/go-phings/terminal-ui"
+	"gopkg.pl/mikogs/lettersnake/pkg/lettersnake"
+	"gopkg.pl/mikogs/termui"
 )
 
-const DOWN = 0
-const UP = 1
-const LEFT = 2
-const RIGHT = 3
-
 type gameInterface struct {
-	t           *tui.TUI
-	game        *tui.TUIPane
-	top         *tui.TUIPane
-	leftBottom  *tui.TUIPane
-	rightBottom *tui.TUIPane
-	g           *game
-	sizeSet     bool
+	tui         *termui.TermUI
+	game        *termui.Pane
+	score       *termui.Pane
+	leftWord    *termui.Pane
+	rightWord   *termui.Pane
+	g           *lettersnake.Game
 }
 
-func newGameInterface(g *game) *gameInterface {
-	gi := &gameInterface{}
+func newGameInterface(g *lettersnake.Game, speed int) *gameInterface {
+	gui := &gameInterface{}
 
-	gi.g = g
-	gi.t = tui.NewTUI()
-	p := gi.t.GetPane()
+	gui.g = g
+	gui.tui = termui.NewTermUI()
+	mainPane := gui.tui.Pane()
 
-	pTop, pGameBottom := p.SplitHorizontally(-3, tui.UNIT_CHAR)
-	pGame, pBottom := pGameBottom.SplitHorizontally(3, tui.UNIT_CHAR)
+	paneScore, _bottom := mainPane.Split(termui.Horizontally, termui.Left, 3, termui.Char)
+	paneGame, _bottomBottom := _bottom.Split(termui.Horizontally, termui.Right, 3, termui.Char)
 
-	pBottomLeft, pBottomRight := pBottom.SplitVertically(50, tui.UNIT_PERCENT)
+	paneLeftWord, paneRightWord := _bottomBottom.Split(termui.Vertically, termui.Right, 50, termui.Percent)
 
-	gi.game = pGame
-	gi.top = pTop
-	gi.leftBottom = pBottomLeft
-	gi.rightBottom = pBottomRight
+	paneScore.Widget = &scorePane{g: g}
+	paneLeftWord.Widget = &leftWordPane{g: g}
+	paneRightWord.Widget = &rightWordPane{g: g}
+	paneGame.Widget = &gamePane{g: g, pane: paneGame, speed: speed}
 
-	gi.initStyle()
-	gi.initIteration()
+	gui.game = paneGame
+	gui.score = paneScore
+	gui.leftWord = paneLeftWord
+	gui.rightWord = paneRightWord
 
-	gi.initKeyboard()
-
-	return gi
+	gui.tui.SetFrame(&termui.Frame{}, paneGame, paneScore, paneLeftWord, paneRightWord)
+	
+	return gui
 }
 
-func (gi *gameInterface) initStyle() {
-	s := tui.NewTUIPaneStyleFrame()
-	gi.game.SetStyle(s)
-	gi.top.SetStyle(s)
-	gi.leftBottom.SetStyle(s)
-	gi.rightBottom.SetStyle(s)
-}
+func (gui *gameInterface) run(ctx context.Context, cancel func()) {
+	wg := sync.WaitGroup{}
+	wg.Add(2)
 
-func (gi *gameInterface) initIteration() {
-	f := func(p *tui.TUIPane) int {
-		if !gi.sizeSet {
-			gi.g.setSize(gi.game.GetWidth()-2, gi.game.GetHeight()-2)
-			gi.sizeSet = true
-		}
+	stopStdio := false
 
-		if !gi.g.isStarted() {
-			p.Write(2, 1, "Press the S key to start the game", false)
-			return NOT_STARTED
-		}
+	go func() {
+		gui.tui.Run(ctx, os.Stdout, os.Stderr)
+		wg.Done()
+		stopStdio = true
+	}()
 
-		r := gi.g.iterate()
-		if r == GAME_OVER {
-			p.Write(2, 0, "** Game over! **", false)
-			return r
-		}
-
-		if r == CONTINUE_GAME {
-			for i := 0; i < len(gi.g.letters); i++ {
-				gi.game.Write(gi.g.letters[i].x, gi.g.letters[i].y, gi.wrapInRandomColour(gi.g.letters[i].l), false)
+	go func() {
+		var b []byte = make([]byte, 1)
+		for {
+			if stopStdio {
+				break
 			}
-			gi.drawSnake()
-		}
-
-		return r
-	}
-
-	gi.game.SetOnDraw(f)
-	gi.game.SetOnIterate(f)
-
-	gi.leftBottom.SetOnIterate(func(p *tui.TUIPane) int {
-		trim := 20 - len(gi.g.currentTranslation)
-		p.Write(1, 0, gi.g.currentTranslation+strings.Repeat(" ", trim), false)
-		return 0
-	})
-
-	gi.rightBottom.SetOnIterate(func(p *tui.TUIPane) int {
-		trim := 20 - len(gi.g.consumedLetters)
-		p.Write(1, 0, gi.g.consumedLetters+strings.Repeat(" ", trim), false)
-		return 0
-	})
-
-	gi.top.SetOnIterate(func(p *tui.TUIPane) int {
-		p.Write(1, 0, fmt.Sprintf("Correct: %d/%d", gi.g.wordsCorrect, gi.g.wordsGiven), false)
-		return 0
-	})
-}
-
-func (gi *gameInterface) drawSnake() {
-	for i := 0; i < len(gi.g.snake); i++ {
-		gi.game.Write(gi.g.snake[i].x, gi.g.snake[i].y, gi.getSnakeSegment(i), false)
-	}
-	if gi.g.remove != nil {
-		gi.game.Write(gi.g.remove.x, gi.g.remove.y, " ", false)
-	}
-}
-
-func (gi *gameInterface) setSpeed(i int) {
-	gi.t.SetLoopSleep(i)
-}
-
-func (gi *gameInterface) initKeyboard() {
-	gi.t.SetOnKeyPress(func(t *tui.TUI, b []byte) {
-		if string(b) == "x" {
-			t.Exit(0)
-		}
-		if string(b) == "s" {
-			if !gi.g.isStarted() {
-				gi.clearPane(gi.game)
-
-				gi.g.startGame()
+			os.Stdin.Read(b)
+			// key press code here
+			if string(b) == "x" {
+				cancel()
+				break
 			}
-			return
-		}
-		// TODO: Keys should be handled differently, maybe in raw mode
-		// left arrow pressed
-		if string(b) == "D" {
-			if gi.g.direction != RIGHT {
-				gi.g.direction = LEFT
+			if string(b) == "s" {
+				if gui.g.State() != lettersnake.GameOn {
+					gui.g.StartGame()
+				}
+				continue
 			}
-			return
-		}
-		// right arrow pressed
-		if string(b) == "C" {
-			if gi.g.direction != LEFT {
-				gi.g.direction = RIGHT
+			// TODO: Keys should be handled differently, maybe in raw mode
+			// left arrow pressed
+			if string(b) == "D" {
+				if gui.g.Direction() != lettersnake.Right {
+					gui.g.SetDirection(lettersnake.Left)
+				}
+				continue
 			}
-			return
-		}
-		// down arrow pressed
-		if string(b) == "B" {
-			if gi.g.direction != UP {
-				gi.g.direction = DOWN
+			// right arrow pressed
+			if string(b) == "C" {
+				if gui.g.Direction() != lettersnake.Left {
+					gui.g.SetDirection(lettersnake.Right)
+				}
+				continue
 			}
-			return
-		}
-		// up arrow pressed
-		if string(b) == "A" {
-			if gi.g.direction != DOWN {
-				gi.g.direction = UP
+			// down arrow pressed
+			if string(b) == "B" {
+				if gui.g.Direction() != lettersnake.Up {
+					gui.g.SetDirection(lettersnake.Down)
+				}
+				continue
 			}
-			return
+			// up arrow pressed
+			if string(b) == "A" {
+				if gui.g.Direction() != lettersnake.Down {
+					gui.g.SetDirection(lettersnake.Up)
+				}
+				continue
+			}
 		}
-	})
-}
+		wg.Done()
+	}()
 
-func (gi *gameInterface) clearPane(p *tui.TUIPane) {
-	for y := 0; y < p.GetHeight()-2; y++ {
-		gi.clearPaneLine(p, y)
-	}
-}
-
-func (gi *gameInterface) clearPaneLine(p *tui.TUIPane, y int) {
-	p.Write(0, y, strings.Repeat(" ", p.GetWidth()-2), false)
-}
-
-func (gi *gameInterface) run() {
-	gi.t.Run(os.Stdout, os.Stderr)
-}
-
-func (gi *gameInterface) wrapInRandomColour(s string) string {
-	colours := []string{"\033[1;93m", "\033[1;92m", "\033[1;95m", "\033[1;96m"}
-	reset := "\033[0m"
-	return colours[rand.Intn(len(colours))] + s + reset
-}
-
-func (gi *gameInterface) getSnakeSegment(i int) string {
-	// 125-159
-	c := 125 + i
-	s := "▓"
-	if i > 0 {
-		s = "▒"
-	}
-	return fmt.Sprintf("\033[38;5;%dm%s\033[0m", c, s)
+	wg.Wait()
 }

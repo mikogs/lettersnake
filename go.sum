@@ -1,4 +1,4 @@
-github.com/go-phings/broccli v2.0.0+incompatible h1:u0+b8He3ZJh8sn8C3Xn3tg5dvL9xZPJZe5JXnogq+mc=
-github.com/go-phings/broccli v2.0.0+incompatible/go.mod h1:P/IIXOofkt4Eevq0//bUVmUVmMdLnDh3MGPJC7wuM0w=
-github.com/go-phings/terminal-ui v0.2.1 h1:Ba2KY6MiJ+xg6ALPmDeDQYEVFQK9L1ymZp/6TK7iklc=
-github.com/go-phings/terminal-ui v0.2.1/go.mod h1:hyl42+Sor0aWyQ5qViet2AiOVI1DZvNJXNhitF4ytHM=
+gopkg.pl/mikogs/broccli/v3 v3.0.1 h1:MBFTJIH+Rrmu5FuuC5a6WYuI4xolOwmXZEi91cmUs5I=
+gopkg.pl/mikogs/broccli/v3 v3.0.1/go.mod h1:CC2HMcHuZ9zkaXBewqeB+aMR+knQmSZFkC/gvgvgzpw=
+gopkg.pl/mikogs/termui v0.5.3 h1:GNH3uBv8iw73mKNiK936LZhIiuPyJEMcc7wDLPUrrfc=
+gopkg.pl/mikogs/termui v0.5.3/go.mod h1:aMEgF/1GVhqlvlxAZmadDWkkCT5AYPIEdv1OmsK/sC8=

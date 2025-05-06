@@ -1,12 +1,12 @@
-# Snakey Letters
+# Lettersnake
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/cli-games/snakey-letters.svg)](https://pkg.go.dev/github.com/cli-games/snakey-letters) [![Go Report Card](https://goreportcard.com/badge/github.com/cli-games/snakey-letters)](https://goreportcard.com/report/github.com/cli-games/snakey-letters)
+[![Go Reference](https://pkg.go.dev/badge/gopkg.pl/mikogs/lettersnake.svg)](https://pkg.go.dev/gopkg.pl/mikogs/lettersnake) [![Go Report Card](https://goreportcard.com/badge/gopkg.pl/mikogs/lettersnake)](https://goreportcard.com/report/github.com/gopkg.pl/mikogs/lettersnake)
 
 This project is a small, terminal-based snake game designed for my kids. The concept is that you get a word in one language and you need to collect letters to form its translation in another.
 
 See screenshot below:
 
-![Snakey-Letters](screenshot.png)
+![Lettersnake](screenshot.png)
 
 ### Running
 

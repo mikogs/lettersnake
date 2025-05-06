@@ -1,8 +1,8 @@
-module github.com/cli-games/snakey-letters
+module gopkg.pl/mikogs/lettersnake
 
-go 1.23.4
+go 1.22.1
 
 require (
-	github.com/go-phings/broccli v2.0.0+incompatible
-	github.com/go-phings/terminal-ui v0.2.1
+	gopkg.pl/mikogs/broccli/v3 v3.0.1
+	gopkg.pl/mikogs/termui v0.5.3
 )
