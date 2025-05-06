@@ -1,3 +1,4 @@
+Polish-English Animals
 pies:dog
 krowa:cow
 kot:cat
